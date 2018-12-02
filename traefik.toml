@@ -30,44 +30,6 @@ address = ":443"
 [retry]
 
 
-[file]
-
-# Ejemplo para poner una aplicación detras de traefik.Home Assistant y plex en este caso.
-#Comentarlas o Borrar la primera vez que creeis el archivo .toml
-[backends]
-  [backends.backend-homeassistant]
-    [backends.backend-homeassistant.servers]
-      [backends.backend-homeassistant.servers.server-homeassistant-ext]
-        url = "http://192.168.0.20:8123"
-        weight = 0
-  [backends.backend-plex]
-    [backends.backend-plex.servers]
-      [backends.backend-plex.servers.server-plex-ext]
-        url = "http://192.168.0.20:32400"
-        weight = 0
-
-[frontends]
-  [frontends.frontend-homeassistant]
-    backend = "backend-homeassistant"
-    passHostHeader = true
-#    basicAuth = [
-#      HTTP Authentication
-#      "xxx:yyyyyyyyyyyy",
-#    ]
-    [frontends.frontend-homeassistant.routes]
-          [frontends.frontend-homeassistant.routes.route-homeassistant-ext]
-        rule = "Host:homeassistant.majahouse.duckdns.org"		
-  [frontends.frontend-plex]
-    backend = "backend-plex"
-    passHostHeader = true
-#    basicAuth = [
-#      HTTP Authentication
-#      "xxx:yyyyyyyyyyyy",
-#    ]
-    [frontends.frontend-plex.routes]
-          [frontends.frontend-plex.routes.route-plex-ext]
-        rule = "Host:plex.majahouse.duckdns.org"	
-		
 #Define Docker Backend Configuration
 [docker]
 endpoint = "unix:///var/run/docker.sock"
