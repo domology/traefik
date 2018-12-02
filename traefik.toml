@@ -1,0 +1,88 @@
+#Traefik Global Configuration
+debug = false
+checkNewVersion = true
+logLevel = "ERROR"
+
+#Define the EntryPoint for HTTP and HTTPS
+defaultEntryPoints = ["https","http"]
+
+#Enable Traefik Dashboard on port 8080
+#with basic authentication method
+#user and password
+[web]
+address = ":8080"
+[web.auth.basic]
+users = ["user:password"] #password creado con htpaswd
+
+#Define the HTTP port 80 and
+#HTTPS port 443 EntryPoint
+#Enable automatically redirect HTTP to HTTPS
+[entryPoints]
+[entryPoints.http]
+address = ":80"
+[entryPoints.http.redirect]
+entryPoint = "https"
+[entryPoints.https]
+address = ":443"
+[entryPoints.https.tls]
+
+#Enable retry sending a request if the network error
+[retry]
+
+
+[file]
+
+# Ejemplo para poner una aplicación detras de traefik.Home Assistant y plex en este caso.
+#Comentarlas o Borrar la primera vez que creeis el archivo .toml
+[backends]
+  [backends.backend-homeassistant]
+    [backends.backend-homeassistant.servers]
+      [backends.backend-homeassistant.servers.server-homeassistant-ext]
+        url = "http://192.168.0.20:8123"
+        weight = 0
+  [backends.backend-plex]
+    [backends.backend-plex.servers]
+      [backends.backend-plex.servers.server-plex-ext]
+        url = "http://192.168.0.20:32400"
+        weight = 0
+
+[frontends]
+  [frontends.frontend-homeassistant]
+    backend = "backend-homeassistant"
+    passHostHeader = true
+#    basicAuth = [
+#      HTTP Authentication
+#      "xxx:yyyyyyyyyyyy",
+#    ]
+    [frontends.frontend-homeassistant.routes]
+          [frontends.frontend-homeassistant.routes.route-homeassistant-ext]
+        rule = "Host:homeassistant.majahouse.duckdns.org"		
+  [frontends.frontend-plex]
+    backend = "backend-plex"
+    passHostHeader = true
+#    basicAuth = [
+#      HTTP Authentication
+#      "xxx:yyyyyyyyyyyy",
+#    ]
+    [frontends.frontend-plex.routes]
+          [frontends.frontend-plex.routes.route-plex-ext]
+        rule = "Host:plex.majahouse.duckdns.org"	
+		
+#Define Docker Backend Configuration
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "TUDOMINIO.duckdns.org"
+watch = true
+exposedbydefault = false
+
+#Letsencrypt Registration
+#Define the Letsencrypt ACME HTTP challenge
+[acme]
+email = "TUMAIL@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+acmeLoggin = true
+onDemand = true
+OnHostRule = true
+  [acme.httpChallenge]
+  entryPoint = "http"
